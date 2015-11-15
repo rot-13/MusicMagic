@@ -9,7 +9,7 @@
                  android:supportsRtl="true"
                  android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:label="MusicMagic">
             <intent-filter>
                 <action android:name="ANDROID.INTENT.ACTION.MAIN" />
                 <category android:name="ANDROID.INTENT.CATEGORY.LAUNCHER" />
