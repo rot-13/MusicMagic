@@ -34,12 +34,10 @@ public class MainActivity extends Activity {
                     public void run() {
                         TextView text = (TextView) findViewById(R.id.textView1);
                         TextView prob = (TextView) findViewById(R.id.textView2);
-                        if (text != null) {
-                            text.setText("" + pitchInHz);
-                            prob.setText("" + probability);
-                        } else {
-                            Log.d("BLA", "BLA");
-                        }
+                        Graph graph = (Graph) findViewById(R.id.graph);
+                        graph.addSample(probability > 0.7 ? pitchInHz : 0);
+                        text.setText("" + pitchInHz);
+                        prob.setText("" + probability);
                     }
                 });
             }
