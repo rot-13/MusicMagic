@@ -8,12 +8,11 @@
                  android:icon="@mipmap/ic_launcher"
                  android:supportsRtl="true"
                  android:theme="@style/AppTheme">
-
-        <activity android:name=".MainActivity" android:label="MusicMagic">
+        <activity android:name=".MainActivity" android:label="Music Magic">
             <intent-filter>
-                <action android:name="ANDROID.INTENT.ACTION.MAIN" />
-                <category android:name="ANDROID.INTENT.CATEGORY.LAUNCHER" />
-                <category android:name="ANDROID.INTENT.CATEGORY.DEFAULT" />
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
