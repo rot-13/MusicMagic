@@ -30,7 +30,8 @@ public class MainActivity extends Activity {
             @Override
             public void handlePitch(PitchDetectionResult result,AudioEvent e) {
                 final float pitchInHz = result.getPitch();
-                final String note = freq2Note(pitchInHz);
+                final int stepsAboveA = stepsAboveBase(pitchInHz);
+                final String note = stepsToNote(stepsAboveA);
                 final float probability = result.getProbability();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -38,7 +39,7 @@ public class MainActivity extends Activity {
                         TextView text = (TextView) findViewById(R.id.textView1);
                         TextView prob = (TextView) findViewById(R.id.textView2);
                         Graph graph = (Graph) findViewById(R.id.graph);
-                        graph.addSample(probability > 0.7 ? pitchInHz : 0);
+                        graph.addSample(probability > 0.7 ? stepsAboveA : 0);
                         text.setText(note);
                         prob.setText("" + probability);
                     }
@@ -52,12 +53,6 @@ public class MainActivity extends Activity {
 
     private static double log(double base, double n) {
         return Math.log(n) / Math.log(base);
-    }
-
-    private static String freq2Note(double frequency) {
-        int steps = stepsAboveBase(frequency);
-        String note = stepsToNote(steps);
-        return note;
     }
 
     private static int stepsAboveBase(double frequency) {
