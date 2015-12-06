@@ -35,7 +35,7 @@ public class Graph extends View {
     {
         mLastSamples = new ArrayList<>(SAMPLES_TO_DRAW);
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mPaint.setColor(0xFF000000);
+        mPaint.setColor(0xFF666666);
         mLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mLinePaint.setColor(0xFF808080);
         setWillNotDraw(false);
@@ -57,7 +57,7 @@ public class Graph extends View {
 
         int lineSpacing = 80;
         float noteHeight = 50;
-        float bottomLineY = colMaxHeight/2;
+        float bottomLineY = colMaxHeight/2 + 2*lineSpacing;
 
         for (int i = 0; i < 5; i++) {
             float y = bottomLineY - (i*lineSpacing);
@@ -69,8 +69,11 @@ public class Graph extends View {
                 break;
             }
 
-            float centerNote = getNoteCenter(mLastSamples.get(i), bottomLineY, noteHeight, lineSpacing);
-            canvas.drawRect(i*colWidth, centerNote - noteHeight / 2, (i+1)*colWidth, centerNote + noteHeight / 2, mPaint);
+            Integer current = mLastSamples.get(i);
+            if (current != -1) {
+                float centerNote = getNoteCenter(mLastSamples.get(i), bottomLineY, noteHeight, lineSpacing);
+                canvas.drawRect(i*colWidth, centerNote - noteHeight / 2, (i+1)*colWidth, centerNote + noteHeight / 2, mPaint);
+            }
         }
     }
 

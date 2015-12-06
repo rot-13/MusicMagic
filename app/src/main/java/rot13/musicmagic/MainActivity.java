@@ -25,6 +25,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
 
         AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050, 1024, 0);
+        final TextView text = (TextView) findViewById(R.id.textView1);
+        final TextView prob = (TextView) findViewById(R.id.textView2);
 
         PitchDetectionHandler pdh = new PitchDetectionHandler() {
             @Override
@@ -36,10 +38,8 @@ public class MainActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        TextView text = (TextView) findViewById(R.id.textView1);
-                        TextView prob = (TextView) findViewById(R.id.textView2);
                         Graph graph = (Graph) findViewById(R.id.graph);
-                        graph.addSample(probability > 0.7 ? stepsAboveA : 0);
+                        graph.addSample(probability > 0.7 ? stepsAboveA : -1);
                         text.setText(note);
                         prob.setText("" + probability);
                     }
@@ -56,16 +56,23 @@ public class MainActivity extends Activity {
     }
 
     private static int stepsAboveBase(double frequency) {
+        if (frequency == -1) {
+            return -1;
+        }
         double unrounded = log(A, frequency / BASE_NOTE_FREQUENCY);
         return (int)Math.round(unrounded);
     }
 
     private static String stepsToNote(int steps) {
+        if (steps == -1) {
+            return null;
+        }
         int mod = steps % 12;
         if (mod < 0) {
             mod += 12;
         }
+        int octave = (int)Math.floor((double)steps / 12.) + 4;
         String[] notes = {"A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"};
-        return notes[mod];
+        return notes[mod] + octave;
     }
 }

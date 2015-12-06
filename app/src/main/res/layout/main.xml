@@ -13,9 +13,20 @@
         android:layout_height="wrap_content"
         android:id="@+id/textView2"/>
 
-    <rot13.musicmagic.Graph
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:id="@+id/graph"/>
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <rot13.musicmagic.Graph
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/graph"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/g_clef"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="LA"
+            />
+    </FrameLayout>
 </LinearLayout>
