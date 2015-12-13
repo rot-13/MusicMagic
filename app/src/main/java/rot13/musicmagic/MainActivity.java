@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import java.util.Date;
+
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
@@ -17,6 +19,8 @@ import be.tarsos.dsp.pitch.PitchProcessor;
  */
 public class MainActivity extends Activity {
 
+    public static final int SAMPLE_RATE = 22050;
+    public static final int SAMPLE_LENGTH_MSECS = 50; // TODO this must be calculated somehow
     private static final int BASE_NOTE_FREQUENCY = 440; // A_4
     private static final double A = Math.pow(2, 1.0/12.0); // Base for freq --> pitch calculations
 
@@ -24,13 +28,14 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050, 1024, 0);
+        AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(SAMPLE_RATE, 1024, 0);
         final TextView text = (TextView) findViewById(R.id.textView1);
         final TextView prob = (TextView) findViewById(R.id.textView2);
+        final Date now = new Date();
 
         PitchDetectionHandler pdh = new PitchDetectionHandler() {
             @Override
-            public void handlePitch(PitchDetectionResult result,AudioEvent e) {
+            public void handlePitch(PitchDetectionResult result, AudioEvent e) {
                 final float pitchInHz = result.getPitch();
                 final int stepsAboveA = stepsAboveBase(pitchInHz);
                 final String note = stepsToNote(stepsAboveA);
@@ -38,6 +43,10 @@ public class MainActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Date newNow = new Date();
+//                        long diff = newNow.getTime() - now.getTime();
+//                        now.setTime(newNow.getTime());
+//                        Log.i("HELLO", "Diff is " + diff);
                         Graph graph = (Graph) findViewById(R.id.graph);
                         graph.addSample(probability > 0.7 ? stepsAboveA : -1);
                         text.setText(note);

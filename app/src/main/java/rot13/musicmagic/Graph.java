@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,10 +16,15 @@ import java.util.List;
 public class Graph extends View {
 
     private static final int SAMPLES_TO_DRAW = 200;
+    private long SAMPLE_RESOLUTION_MSECS = 100;
+    private long BAR_INTERVAL_MSECS = 4000;
+    private static final int LINE_SPACING = 80;
+    private static final float NOTE_HEIGHT = 50;
 
     private List<Integer> mLastSamples;
     private Paint mPaint;
     private Paint mLinePaint;
+    private Date mLastBarLineTime;
 
     public Graph(Context context) {
         super(context);
@@ -52,32 +58,57 @@ public class Graph extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawRGB(255, 255, 255);
-        float colWidth = (float)canvas.getWidth() / SAMPLES_TO_DRAW;
-        float colMaxHeight = (float)canvas.getHeight();
+        float maxY = (float)canvas.getHeight();
+        float maxX = (float)canvas.getWidth();
+        float colWidth = maxX / SAMPLES_TO_DRAW;
+        float samplesInBar = BAR_INTERVAL_MSECS / MainActivity.SAMPLE_LENGTH_MSECS;
+        float barWidth = samplesInBar * colWidth;
 
-        int lineSpacing = 80;
-        float noteHeight = 50;
-        float bottomLineY = colMaxHeight/2 + 2*lineSpacing;
+        float bottomLineY = maxY/2 + 2*LINE_SPACING;
+        float topLineY = bottomLineY - 4*LINE_SPACING;
 
+        // Draw staff
         for (int i = 0; i < 5; i++) {
-            float y = bottomLineY - (i*lineSpacing);
+            float y = bottomLineY - (i*LINE_SPACING);
             canvas.drawLine(0, y, canvas.getWidth(), y, mLinePaint);
         }
 
+        // Calculate first bar line
+        Date now = new Date();
+        if (mLastBarLineTime == null) {
+            mLastBarLineTime = now;
+        }
+        long mSecsSinceLastSample = now.getTime() - mLastBarLineTime.getTime();
+        float lineX;
+        if (mSecsSinceLastSample >= BAR_INTERVAL_MSECS) {
+            lineX = 0;
+            mLastBarLineTime = now;
+        } else {
+            float percentElapsed = (float)mSecsSinceLastSample / BAR_INTERVAL_MSECS;
+            float shiftLeft = barWidth * percentElapsed;
+            lineX = barWidth - shiftLeft;
+        }
+
+        // Draw bar lines
+        while (lineX <= maxX) {
+            canvas.drawLine(lineX, bottomLineY, lineX, topLineY, mLinePaint);
+            lineX += barWidth;
+        }
+
+        // Draw notes
         for (int i = 0; i < SAMPLES_TO_DRAW; ++i) {
             if (mLastSamples.size() <= i) {
                 break;
             }
-
             Integer current = mLastSamples.get(i);
             if (current != -1) {
-                float centerNote = getNoteCenter(mLastSamples.get(i), bottomLineY, noteHeight, lineSpacing);
-                canvas.drawRect(i*colWidth, centerNote - noteHeight / 2, (i+1)*colWidth, centerNote + noteHeight / 2, mPaint);
+                float centerNote = getNoteCenter(mLastSamples.get(i), bottomLineY;
+                canvas.drawRect(i*colWidth, centerNote - NOTE_HEIGHT / 2, (i+1)*colWidth, centerNote + NOTE_HEIGHT / 2, mPaint);
             }
         }
     }
 
-    private float getNoteCenter(int stepsAboveA, float bottomLineY, float noteHeight, float lineHeight) {
+    private float getNoteCenter(int stepsAboveA, float bottomLineY) {
         double lines[] = {1.5, 1.5, 2, -1, -1, -0.5, -0.5, 0, 0.5, 0.5, 1, 1};
         boolean flats[] = {false, true, false, false, true, false, true, false, false, true, false, true};
 
@@ -88,7 +119,7 @@ public class Graph extends View {
 
         double line = lines[index];
         boolean flat = flats[index];
-        double noteCenter = bottomLineY - line*lineHeight;
+        double noteCenter = bottomLineY - line*LINE_SPACING;
         return (float)noteCenter;
     }
 }
