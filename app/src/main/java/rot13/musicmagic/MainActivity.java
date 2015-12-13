@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import java.util.Date;
-
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
@@ -23,6 +21,9 @@ public class MainActivity extends Activity {
     public static final int SAMPLE_LENGTH_MSECS = 50; // TODO this must be calculated somehow
     private static final int BASE_NOTE_FREQUENCY = 440; // A_4
     private static final double A = Math.pow(2, 1.0/12.0); // Base for freq --> pitch calculations
+    private static final double MIN_PROBABILITY = 0.8;
+    private static final int MIN_STEPS = -12;
+    private static final int MAX_STEPS = 24;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +32,6 @@ public class MainActivity extends Activity {
         AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(SAMPLE_RATE, 1024, 0);
         final TextView text = (TextView) findViewById(R.id.textView1);
         final TextView prob = (TextView) findViewById(R.id.textView2);
-        final Date now = new Date();
 
         PitchDetectionHandler pdh = new PitchDetectionHandler() {
             @Override
@@ -43,12 +43,11 @@ public class MainActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Date newNow = new Date();
-//                        long diff = newNow.getTime() - now.getTime();
-//                        now.setTime(newNow.getTime());
-//                        Log.i("HELLO", "Diff is " + diff);
                         Graph graph = (Graph) findViewById(R.id.graph);
-                        graph.addSample(probability > 0.7 ? stepsAboveA : -1);
+                        boolean add = probability > MIN_PROBABILITY &&
+                                stepsAboveA > MIN_STEPS &&
+                                stepsAboveA < MAX_STEPS;
+                        graph.addSample(add ? stepsAboveA : -1);
                         text.setText(note);
                         prob.setText("" + probability);
                     }

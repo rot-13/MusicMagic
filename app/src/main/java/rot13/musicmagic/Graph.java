@@ -102,22 +102,37 @@ public class Graph extends View {
             }
             Integer current = mLastSamples.get(i);
             if (current != -1) {
-                float centerNote = getNoteCenter(mLastSamples.get(i), bottomLineY;
+                float centerNote = getNoteCenter(mLastSamples.get(i), bottomLineY);
                 canvas.drawRect(i*colWidth, centerNote - NOTE_HEIGHT / 2, (i+1)*colWidth, centerNote + NOTE_HEIGHT / 2, mPaint);
             }
         }
     }
 
     private float getNoteCenter(int stepsAboveA, float bottomLineY) {
-        double lines[] = {1.5, 1.5, 2, -1, -1, -0.5, -0.5, 0, 0.5, 0.5, 1, 1};
+        double lines[] = {
+                1.5, // A
+                1.5, // A#
+                2, // B
+                2.5, // C
+                2.5, // C#
+                3, // D
+                3, // D#
+                3.5, // E
+                4, // F
+                4, // F#
+                4.5, // G
+                4.5, // G#
+        };
         boolean flats[] = {false, true, false, false, true, false, true, false, false, true, false, true};
 
         int index = stepsAboveA % 12;
+        int octave = (int)Math.floor((float)stepsAboveA / 12);
         if (index < 0) {
             index += 12;
         }
 
-        double line = lines[index];
+        double line = lines[index] + octave*3.5;
+
         boolean flat = flats[index];
         double noteCenter = bottomLineY - line*LINE_SPACING;
         return (float)noteCenter;
