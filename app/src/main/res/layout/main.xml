@@ -21,12 +21,39 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/graph"/>
-        <ImageView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/g_clef"
-            android:layout_gravity="center_vertical"
-            android:contentDescription="LA"
-            />
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/clef"
+                android:src="@drawable/g_clef"
+                android:layout_gravity="left"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_toRightOf="@+id/clef"
+                android:layout_gravity="center_vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/topTempo"
+                    android:text="4"
+                    android:gravity="bottom"
+                    style="@style/TempoText"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:text="4"
+                    style="@style/TempoText"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
     </FrameLayout>
 </LinearLayout>
